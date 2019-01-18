@@ -126,16 +126,22 @@ class Instrument():
         return configurationDetail
     
     def get_state_file(self, semester=None, progname=None, statenam=None):
-        config = self.db.Configurations.find(
+        config = list(self.db.Configurations.find(
             {'semester':semester, 
              'progname': progname,
-             'statenam': statenam})
-        output_config = ""
-        translated_config = ""
-        for conf in config:
-            output_config = conf
-        if output_config:
-            translated_config = self.convert_configuration(output_config)
+             'statenam': statenam}))
+
+        if len(list(config)) == 0:
+            print("No results returned")
+            return
+        if len(list(config)) > 1:
+            print("More than one configuration meet the search criteria")
+            for conf in config:
+                print(conf)
+            return
+        else:
+            translated_config = self.convert_configuration(config[0])
+
         print("STATE FILE: \n")
         if translated_config:
             for key in translated_config:
