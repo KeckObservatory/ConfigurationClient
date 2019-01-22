@@ -16,7 +16,7 @@ except:
 
 # establish connection with configuration database
 # first you need: ssh keola@observinglogs -L 27017:localhost:27017
-client = MongoClient('localhost')
+client = MongoClient('observinglogs')
 
 
 class Instrument():
@@ -176,6 +176,7 @@ class LRIS(Instrument):
 class MOSFIRE(Instrument):
     def __init__(self):
         self.db = client.MOSFIRE
+        self.set_conversion_elements()
         super(MOSFIRE, self).__init__()
         
     @Instrument.ktl_decorator
@@ -183,6 +184,15 @@ class MOSFIRE(Instrument):
         mosfire = ktl.cache('mosfire')
         outdir = mosfire['outdir'].read()
         return(outdir)
+
+    def set_conversion_elements(self):
+        self.elements = {
+            '1': ['statenam', 'statenam', False],
+            '2': ['progname', 'progname', False],
+            '3': ['COADDS', 'coadds', False],
+            '4': ['MDCNAME', 'mdcname', False],
+            '5': ['OBSMODE', 'obsmode', False],
+            }
     
 class KCWI(Instrument):
     def __init__(self):

@@ -16,6 +16,6 @@ parser.add_argument('-state_name', '-name', '-n', default=None, help='State name
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    instrument_class = get_instrument_class(args.instrument)
+    instrument_class = get_instrument_class(args.instrument.upper())
     instrument_class.get_state_file(semester=args.semester, progname=args.progname, statenam=args.state_name)
 
