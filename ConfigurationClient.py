@@ -118,11 +118,11 @@ class Instrument():
                     raise KeyError("Missing keyword %s" % (e))
 
             else:
-                try:
+                #try:
                     configurationDetail[state_keyword] = configuration[mongo_keyword]
-                except:
-                    configurationDetail[state_keyword]=""
-        configurationDetail['id']=str(configuration['_id'])
+                #except:
+                #    configurationDetail[state_keyword]=""
+        #configurationDetail['id']=str(configuration['_id'])
         return configurationDetail
     
     def get_state_file(self, semester=None, progname=None, statenam=None):
@@ -130,7 +130,6 @@ class Instrument():
             {'semester':semester, 
              'progname': progname,
              'statenam': statenam}))
-
         if len(list(config)) == 0:
             print("No results returned")
             return
@@ -141,8 +140,6 @@ class Instrument():
             return
         else:
             translated_config = self.convert_configuration(config[0])
-
-        print("STATE FILE: \n")
         if translated_config:
             for key in translated_config:
                 if translated_config[key]:
@@ -172,6 +169,30 @@ class LRIS(Instrument):
             '7': ['PROGNAME', 'progname', False]
             }
     
+class HIRES(Instrument):
+    def __init__(self):
+        self.db = client.HIRES
+        self.set_conversion_elements()
+        super(HIRES, self).__init__()
+    
+    @Instrument.ktl_decorator
+    def get_outdir(self):
+        lris = ktl.cache('hires')
+        outdir = hires['outdir'].read()
+        return(outdir)
+    
+    def set_conversion_elements(self):
+        self.elements = {
+            '1': ['fil1name', 'fil1name', False],
+            '2': ['fil1name', 'fil1name', False],
+            '3': ['deckname', 'deckname', False],
+            '4': ['echangl', 'echangl', False],
+            '5': ['xdangl', 'xdangl', False],
+            '6': ['hatch', 'hatch', False],
+            '7': ['coll', 'coll', False],
+            '8': ['lampname', 'lampname', False],
+            '9': ['lfilname', 'lfilname', False],            
+            }
 
 class MOSFIRE(Instrument):
     def __init__(self):
@@ -234,4 +255,6 @@ def get_instrument_class(instrument):
         myclass = MOSFIRE()
     if instrument == 'KCWI':
         myclass = KCWI()
+    if instrument == 'HIRES':
+        myclass = HIRES()
     return myclass
